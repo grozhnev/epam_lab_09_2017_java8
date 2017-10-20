@@ -23,19 +23,19 @@ public class FunctionCombinationExercise {
     // TODO
     // negate1: (Person -> boolean) -> (Person -> boolean)
     private Predicate<Person> negate1(Predicate<Person> test) {
-        return p -> {
+        return p ->
             // TODO
-            throw new UnsupportedOperationException();
-        };
+            //throw new UnsupportedOperationException();
+            !test.test(p);
     }
 
     // TODO
     // validateFirstNameAndLastName: (Person -> boolean, Person -> boolean) -> (Person -> boolean)
     private Predicate<Person> validateFirstNameAndLastName(Predicate<Person> t1, Predicate<Person> t2) {
-        return p -> {
+        return p ->
             // TODO
-            throw new UnsupportedOperationException();
-        };
+           // throw new UnsupportedOperationException();
+        t1.test(p) && t2.test(p);
     }
 
     @Test
