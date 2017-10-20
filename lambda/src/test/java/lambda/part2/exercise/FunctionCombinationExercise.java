@@ -57,14 +57,16 @@ public class FunctionCombinationExercise {
     // negate: (T -> boolean) -> (T -> boolean)
     private <T> Predicate<T> negate(Predicate<T> test) {
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return test.negate();
     }
 
     // TODO
     // and: (T -> boolean, T -> boolean) -> (T -> boolean)
     private <T> Predicate<T> and(Predicate<T> t1, Predicate<T> t2) {
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return (p) -> t1.test(p) && t2.test(p);
     }
 
     @Test
