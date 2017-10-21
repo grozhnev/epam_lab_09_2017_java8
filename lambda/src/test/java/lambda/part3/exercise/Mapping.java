@@ -163,6 +163,10 @@ public class Mapping {
                 .map(TODO) // Добавить всем сотрудникам 1 год опыта .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
                 .map(TODO) // Заменить все qu на QA
                 */
+
+                .map(e -> e.withPerson(e.getPerson().withFirstName("John"))) // Изменить имя всех сотрудников на John
+                .map(e -> e.withJobHistory(addOneYear(e.getJobHistory()))) // Добавить всем сотрудникам 1 год опыта
+                .map(e -> e.withJobHistory(qaChangeOnQA(e.getJobHistory()))) // Заменить все qu на QA
                 .force();
 
         List<Employee> expectedResult = Arrays.asList(
