@@ -5,10 +5,7 @@ import data.JobHistoryEntry;
 import data.Person;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -31,13 +28,19 @@ public class Mapping {
         // ([T], T -> R) -> [R]
         public <R> MapHelper<R> map(Function<T, R> f) {
             // TODO
-            throw new UnsupportedOperationException();
+            //throw new UnsupportedOperationException();
+            List<R> rList = new ArrayList<>(list.size());
+            list.forEach(t -> rList.add(f.apply(t)));
+            return new MapHelper<>(rList);
         }
 
         // ([T], T -> [R]) -> [R]
         public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
             // TODO
-            throw new UnsupportedOperationException();
+            //throw new UnsupportedOperationException();
+            List<R> rList = new ArrayList<>(list.size());
+            list.forEach(t -> rList.addAll(f.apply(t)));
+            return new MapHelper<>(rList);
         }
     }
 
