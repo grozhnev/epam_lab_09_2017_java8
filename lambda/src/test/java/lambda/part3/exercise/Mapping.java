@@ -122,13 +122,13 @@ public class Mapping {
         public List<R> force() {
             // TODO
             //throw new UnsupportedOperationException();
-            return new MapHelper<T>(list).map(function).getList();
+            return new MapHelper<>(list).map(function).getList();
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
             // TODO
             //throw new UnsupportedOperationException();
-            return new LazyMapHelper<T, R2>(list, function.andThen(f));
+            return new LazyMapHelper<>(list, function.andThen(f));
         }
     }
 
