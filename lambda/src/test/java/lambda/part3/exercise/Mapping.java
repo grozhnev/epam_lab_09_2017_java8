@@ -70,6 +70,11 @@ public class Mapping {
                 .map(TODO) // Добавить всем сотрудникам 1 год опыта .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
                 .map(TODO) // Заменить все qa на QA
                 * */
+
+                .map(e -> e.withPerson(e.getPerson().withFirstName("John"))) // Изменить имя всех сотрудников на John
+                .map(e -> e.withJobHistory(addOneYear(e.getJobHistory()))) // Добавить всем сотрудникам 1 год опыта
+                .map(e -> e.withJobHistory(qaChangeOnQA(e.getJobHistory()))) // Заменить все qa на QA
+
                 .getList();
 
         List<Employee> expectedResult = Arrays.asList(
@@ -93,9 +98,21 @@ public class Mapping {
         assertEquals(mappedEmployees, expectedResult);
     }
 
+    private List<JobHistoryEntry>  qaChangeOnQA(List<JobHistoryEntry> jobHistory) {
+        return new MapHelper<>(jobHistory).map(e -> e.getPosition().equals("qa") ? e.withPosition("QA") : e).getList();
+    }
+
+    private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
+        return new MapHelper<>(jobHistory).map(e -> e.withDuration(e.getDuration() + 1)).getList();
+    }
+
     private static class LazyMapHelper<T, R> {
+        private List<T> list;
+        private Function<T, R> function;
 
         public LazyMapHelper(List<T> list, Function<T, R> function) {
+            this.list = list;
+            this.function =function;
         }
 
         public static <T> LazyMapHelper<T, T> from(List<T> list) {
@@ -104,12 +121,14 @@ public class Mapping {
 
         public List<R> force() {
             // TODO
-            throw new UnsupportedOperationException();
+            //throw new UnsupportedOperationException();
+            return new MapHelper<T>(list).map(function).getList();
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
             // TODO
-            throw new UnsupportedOperationException();
+            //throw new UnsupportedOperationException();
+            return new LazyMapHelper<T, R2>(list, function.andThen(f));
         }
     }
 
