@@ -77,7 +77,7 @@ public class FunctionCombinationExercise {
         Predicate<Person> validateFirstName = negate(hasEmptyFirstName);//person -> !person.getFirstName().isEmpty();//null; // TODO use negate
         Predicate<Person> validateLastName = negate(hasEmptyLastName);//person -> !person.getLastName().isEmpty();//null; // TODO use negate
 
-        Predicate<Person> validate = validateFirstNameAndLastName(validateFirstName, validateLastName);//person -> !person.getFirstName().isEmpty() && !person.getLastName().isEmpty();//null; // TODO use and
+        Predicate<Person> validate = and(validateFirstName, validateLastName);//person -> !person.getFirstName().isEmpty() && !person.getLastName().isEmpty();//null; // TODO use and
 
         assertTrue(validate.test(new Person("a", "b", 0)));
         assertFalse(validate.test(new Person("", "b", 0)));
