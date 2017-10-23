@@ -6,8 +6,6 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -188,8 +186,8 @@ public class StreamsExercise2 {
         /*we just need to add filter */
         result = employees.stream()
                 .flatMap(employee -> employee.getJobHistory().stream()
-                        .limit(1)
-                        .map(JobHistoryEntry::getEmployer) // get employers map by employees
+                        .limit(1)                                                                        // limit by first job
+                        .map(JobHistoryEntry::getEmployer)                                               // get employers map by employees
                         .map(employer -> new AbstractMap.SimpleEntry<>(employer, employee.getPerson()))) // get map of persons by employers
                 .collect(Collectors.groupingBy(AbstractMap.SimpleEntry::getKey,                          // collect persons by employers
                         Collectors.mapping(Map.Entry::getValue,
@@ -223,7 +221,56 @@ public class StreamsExercise2 {
      */
     @Test
     public void greatestExperiencePerEmployer() {
-        Map<String, Person> result = null;// TODO
+
+        Map<String, Person> result; //= null;// TODO
+        List<Employee> employees = getEmployees();
+
+         class PersonJobDurationAtEmployer {
+            private final Person person;
+            private final String employer;
+            private Integer jobDuration;
+
+            private PersonJobDurationAtEmployer(String employer, Person person, Integer jobDuration) {
+                this.person = person;
+                this.employer = employer;
+                this.jobDuration = jobDuration;
+            }
+
+            private Person getPerson() {
+                return person;
+            }
+
+            private String getEmployer() {
+                return employer;
+            }
+
+            private Integer getJobDuration() {
+                return jobDuration;
+            }
+        }
+
+        result = employees.stream().flatMap(
+                employee -> employee.getJobHistory().stream()                           // get job history stream of employees
+                    .collect(
+                            Collectors.groupingBy(JobHistoryEntry::getEmployer,
+                            Collectors.summingInt(JobHistoryEntry::getDuration))
+                    )                                                                   // sum job durations of each employer
+                    .entrySet().stream().map(
+                            job -> new PersonJobDurationAtEmployer(
+                                    job.getKey(), employee.getPerson(), job.getValue()
+                            )
+                    )
+                )                                                                       // mapping job durations by employees
+                .collect(Collectors.groupingBy(
+                        PersonJobDurationAtEmployer::getEmployer,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(
+                                        Comparator.comparingInt(
+                                                PersonJobDurationAtEmployer::getJobDuration)), // compare to MAX job duration
+                                (greatestExperience) -> greatestExperience.get().getPerson())  // get person by MAX job duration
+                        )                                                               // group persons with max job durations by employers
+                );
+
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("epam", new Person("John", "White", 28));
