@@ -16,15 +16,15 @@ public class OptionalExample {
     @Test
     public void get() {
         Optional<String> o1 = Optional.empty();
-        /* i'm not sure that this is alright, but the test is passed */
-        /*if(o1.isPresent()){
+        // i'm not sure that this is alright, but the test is passed
+        if(o1.isPresent()){
             o1.get();
-        }*/
+        }
 
-        o1.ifPresent(s -> System.out.println(s));
+        /*o1.ifPresent(s -> System.out.println(s));
         o1.orElse("t");
         o1.orElseGet(() -> "t");
-        o1.orElseThrow(() -> new UnsupportedOperationException());
+        o1.orElseThrow(() -> new UnsupportedOperationException());*/
     }
 
     @Test
@@ -66,8 +66,18 @@ public class OptionalExample {
                 return empty();
             }
         }*/
-        
+        Optional<String> optional = getOptional();
+        Function<String, Optional<Integer>> optionalFlatMappingFunction = str -> Optional.of(str.length());
+        Optional<Integer> optional2;
 
+        if(optional.isPresent()){
+            optional2 = Optional.of(optional.get().length());
+        } else {
+            optional2 = Optional.empty();
+        }
+
+
+        assertEquals(optional.flatMap(optionalFlatMappingFunction), optional2);
         //throw new UnsupportedOperationException("Not implemented");
     }
 
