@@ -6,6 +6,8 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -68,7 +70,37 @@ public class StreamsExercise2 {
     @Test
     public void employersStuffList() {
         List<Employee> employees = getEmployees();
-        Map<String, Set<Person>> result = null; // TODO
+        Map<String, Set<Person>> result; // = null; // TODO
+
+        /*
+        Решение:
+            1. Взять список всех компаний ()
+                1.1 пройтись по списку сотрудников.списку компаний
+                    сложить все компании в distinct() list String'ов
+            2. Пройтись по списку сотрудников.компани в которых он работал
+                добавить сотрудника в Set каждой компании
+        */
+
+        /* all unique employees */
+        /*Set<Person> allEmployeesAsPersons = employees.stream()
+                .map(Employee::getPerson)
+                .collect(Collectors.toSet());*/
+
+        /* all unique companies */
+        /*Set<String> allCompanies = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream())
+                .map(JobHistoryEntry::getEmployer)
+                .collect(Collectors.toSet());*/
+
+         /* fill map of companies by each person */
+        result = employees.stream()
+                        .flatMap(employee -> employee.getJobHistory().stream().map(JobHistoryEntry::getEmployer) // get employers map by employees
+                        .map(employer -> new AbstractMap.SimpleEntry<>(employer, employee.getPerson())))         // get map of persons by employers
+                        .collect(Collectors.groupingBy(AbstractMap.SimpleEntry::getKey,                          // collect persons by employers
+                                                        Collectors.mapping(Map.Entry::getValue,
+                                                        Collectors.toSet()))
+                        );
+
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("epam", new HashSet<>(Arrays.asList(
