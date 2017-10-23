@@ -6,6 +6,7 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CollectorsExercise1 {
 
@@ -14,32 +15,58 @@ public class CollectorsExercise1 {
         private final String position;
         private final int duration;
 
-        public PersonPositionDuration(Person person, String position, int duration) {
+        PersonPositionDuration(Person person, String position, int duration) {
             this.person = person;
             this.position = position;
             this.duration = duration;
         }
 
-        public Person getPerson() {
+        Person getPerson() {
             return person;
         }
 
-        public String getPosition() {
+        String getPosition() {
             return position;
         }
 
-        public int getDuration() {
+        int getDuration() {
             return duration;
         }
     }
 
 
     // "epam" -> "Alex Ivanov 23, Semen Popugaev 25, Ivan Ivanov 33"
+
+    private static class EmployerPersonPair {
+        private final String person;
+        private final String employer;
+
+        EmployerPersonPair(String employer, String person) {
+            this.employer = employer;
+            this.person = person;
+        }
+
+        String getPerson() {
+            return person;
+        }
+
+        String getEmployer() {
+            return employer;
+        }
+    }
+
+
     @Test
     public void getEmployeesByEmployer() {
-        Map<String, String> result = null;
-
+       Map<String, String> result = //null;
+                getEmployees().stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                .map(JobHistoryEntry::getEmployer)
+                .map(employer -> new EmployerPersonPair(employer, employee.getPerson().toString())))
+                .collect(Collectors.groupingBy(EmployerPersonPair::getEmployer,
+                        Collectors.mapping(EmployerPersonPair::getPerson, Collectors.joining(", "))));
     }
+
 
     @Test
     public void getTheCoolestOne() {
@@ -58,7 +85,17 @@ public class CollectorsExercise1 {
         // Collectors.toMap
         // iterate twice: stream...collect(...).stream()...
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+
+        return employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()                  //get job history of all employees
+                        .collect(Collectors.groupingBy(JobHistoryEntry::getPosition,
+                                Collectors.summingInt(JobHistoryEntry::getDuration)))   // group job history by positions and sum duration
+                        .entrySet().stream()
+                        .map(pair -> new PersonPositionDuration(employee.getPerson(), pair.getKey(), pair.getValue())))
+                .collect(Collectors.groupingBy(PersonPositionDuration::getPosition,     // group pair of person-position-duration by position
+                        Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(PersonPositionDuration::getDuration)),
+                                personWithMaxDuration -> personWithMaxDuration.get().getPerson())));                      // find person with max duration and get them.
     }
 
     private List<Employee> getEmployees() {
