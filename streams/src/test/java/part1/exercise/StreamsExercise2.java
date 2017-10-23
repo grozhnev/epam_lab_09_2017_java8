@@ -6,6 +6,7 @@ import data.Person;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -181,7 +182,19 @@ public class StreamsExercise2 {
      */
     @Test
     public void indexByFirstEmployer() {
-        Map<String, Set<Person>> result = null; // TODO
+        Map<String, Set<Person>> result ;//= null; // TODO
+        List<Employee> employees = getEmployees();
+
+        /*we just need to add filter */
+        result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .limit(1)
+                        .map(JobHistoryEntry::getEmployer) // get employers map by employees
+                        .map(employer -> new AbstractMap.SimpleEntry<>(employer, employee.getPerson()))) // get map of persons by employers
+                .collect(Collectors.groupingBy(AbstractMap.SimpleEntry::getKey,                          // collect persons by employers
+                        Collectors.mapping(Map.Entry::getValue,
+                                Collectors.toSet()))
+                );
 
 
         Map<String, Set<Person>> expected = new HashMap<>();
