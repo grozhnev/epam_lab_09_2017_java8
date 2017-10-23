@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,14 +17,14 @@ public class OptionalExample {
     public void get() {
         Optional<String> o1 = Optional.empty();
         /* i'm not sure that this is alright, but the test is passed */
-        if(o1.isPresent()){
+        /*if(o1.isPresent()){
             o1.get();
-        }
+        }*/
 
-        /*o1.ifPresent(s -> System.out.println(s));
+        o1.ifPresent(s -> System.out.println(s));
         o1.orElse("t");
         o1.orElseGet(() -> "t");
-        o1.orElseThrow(() -> new UnsupportedOperationException());*/
+        o1.orElseThrow(() -> new UnsupportedOperationException());
     }
 
     @Test
@@ -57,12 +58,43 @@ public class OptionalExample {
 
     @Test
     public void flatMap() {
-        throw new UnsupportedOperationException("Not implemented");
+        /*
+        public <R> Optional<R> flatMap(Function<? super T, Optional<R>> mapper) {
+            if (isPresent()) {
+                return mapper.apply(value);
+            } else {
+                return empty();
+            }
+        }*/
+        
+
+        //throw new UnsupportedOperationException("Not implemented");
     }
+
 
     @Test
     public void filter() {
-        throw new UnsupportedOperationException("Not implemented");
+        /*
+        public Optional<T> filter(Predicate<? super T> predicate) {
+            if (isPresent()) {
+                return predicate.test(value) ? this : empty();
+            } else {
+                return empty();
+            }
+        }*/
+
+        Optional<String> optional = getOptional();
+        Predicate<String> optionalPredicateStringHasLength = s -> s.length() != 0;
+        Optional<String> optional2;
+
+        if (optional.isPresent()){
+            optional2 = optional.filter(optionalPredicateStringHasLength);
+        } else {
+            optional2 = Optional.empty();
+        }
+
+        assertEquals(optional, optional2);
+        //throw new UnsupportedOperationException("Not implemented");
     }
 
     private Optional<String> getOptional() {
