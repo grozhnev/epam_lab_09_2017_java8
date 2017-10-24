@@ -12,7 +12,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     private long arrayBeginning;
     private final long arrayEnding;
 
-    RectangleSpliterator(int[][] array) {
+    public RectangleSpliterator(int[][] array) {
         this(array, 0 , checkArrayAndCalcEstimatedSize(array));
     }
 

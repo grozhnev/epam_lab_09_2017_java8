@@ -23,19 +23,31 @@ public class ZipWithIndexDoubleSpliterator extends Spliterators.AbstractSplitera
     @Override
     public int characteristics() {
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return inner.characteristics();
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super IndexedDoublePair> action) {
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        boolean result;
+        if (currentIndex < inner.estimateSize()) {
+            if (inner.tryAdvance((double value) -> action.accept(new IndexedDoublePair(currentIndex, value)))) {
+                currentIndex++;
+            }
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
     }
 
     @Override
     public void forEachRemaining(Consumer<? super IndexedDoublePair> action) {
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        inner.forEachRemaining((double value) -> action.accept(new IndexedDoublePair(currentIndex, value)));
     }
 
     @Override
@@ -44,13 +56,24 @@ public class ZipWithIndexDoubleSpliterator extends Spliterators.AbstractSplitera
         // if (inner.hasCharacteristics(???)) {
         //   use inner.trySplit
         // } else
+        //return super.trySplit();
 
-        return super.trySplit();
+        if (inner.hasCharacteristics(Spliterator.SIZED | Spliterator.SUBSIZED)) {
+            OfDouble trySplit = inner.trySplit();
+            if (trySplit == null) {
+                return null;
+            }
+            currentIndex += trySplit.estimateSize();
+            return new ZipWithIndexDoubleSpliterator(currentIndex, inner.trySplit());
+        } else {
+            return super.trySplit();
+        }
     }
 
     @Override
     public long estimateSize() {
         // TODO
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return inner.estimateSize();
     }
 }
