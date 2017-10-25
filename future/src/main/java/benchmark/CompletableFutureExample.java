@@ -15,6 +15,7 @@ public class CompletableFutureExample {
 //        System.out.println(Arrays.toString(ints1));
 
 //        simpleExample();
+        simpleExample();
         acceptBoth();
     }
 
